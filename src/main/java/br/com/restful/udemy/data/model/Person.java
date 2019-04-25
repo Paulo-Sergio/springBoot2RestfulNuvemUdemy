@@ -1,4 +1,4 @@
-package br.com.restful.udemy.model;
+package br.com.restful.udemy.data.model;
 
 import java.io.Serializable;
 
