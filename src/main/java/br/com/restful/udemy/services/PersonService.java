@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.restful.udemy.converter.DozerConverter;
 import br.com.restful.udemy.data.model.Person;
+import br.com.restful.udemy.data.vo.PersonVO;
 import br.com.restful.udemy.exception.ResourceNotFoundException;
 import br.com.restful.udemy.repository.PersonRepository;
 
@@ -15,27 +17,34 @@ public class PersonService {
 	@Autowired
 	private PersonRepository repository;
 
-	public Person create(Person person) {
-		return repository.save(person);
+	public PersonVO create(PersonVO personVO) {
+		Person entity = DozerConverter.parseObject(personVO, Person.class);
+		PersonVO vo = DozerConverter.parseObject(repository.save(entity), PersonVO.class);
+		return vo;
 	}
 
-	public List<Person> findAll() {
-		return repository.findAll();
+	public List<PersonVO> findAll() {
+		List<Person> persons = repository.findAll();
+		List<PersonVO> vos = DozerConverter.parseListObjects(persons, PersonVO.class);
+		return vos;
 	}
 
-	public Person findById(Long id) {
-		return repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("No records found for this ID"));
-	}
-
-	public Person update(Person person) {
-		Person entity = repository.findById(person.getId())
+	public PersonVO findById(Long id) {
+		Person entity = repository.findById(id)
 				.orElseThrow(() -> new ResourceNotFoundException("No records found for this ID"));
-		entity.setFirstName(person.getFirstName());
-		entity.setLastName(person.getLastName());
-		entity.setAddress(person.getAddress());
-		entity.setGender(person.getAddress());
+		return DozerConverter.parseObject(entity, PersonVO.class);
+	}
 
-		return repository.save(entity);
+	public PersonVO update(PersonVO personVO) {
+		Person entity = repository.findById(personVO.getId())
+				.orElseThrow(() -> new ResourceNotFoundException("No records found for this ID"));
+		entity.setFirstName(personVO.getFirstName());
+		entity.setLastName(personVO.getLastName());
+		entity.setAddress(personVO.getAddress());
+		entity.setGender(personVO.getGender());
+
+		PersonVO vo = DozerConverter.parseObject(repository.save(entity), PersonVO.class);
+		return vo;
 	}
 
 	public void delete(Long id) {
