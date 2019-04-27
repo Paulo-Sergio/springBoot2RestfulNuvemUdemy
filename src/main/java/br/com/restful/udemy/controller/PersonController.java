@@ -17,7 +17,7 @@ import br.com.restful.udemy.data.vo.PersonVO;
 import br.com.restful.udemy.services.PersonService;
 
 @RestController
-@RequestMapping("/person")
+@RequestMapping("/api/v1/person")
 public class PersonController {
 
 	@Autowired
