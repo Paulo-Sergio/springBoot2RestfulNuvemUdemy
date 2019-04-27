@@ -19,63 +19,63 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.restful.udemy.data.vo.PersonVO;
-import br.com.restful.udemy.services.PersonService;
+import br.com.restful.udemy.data.vo.BookVO;
+import br.com.restful.udemy.services.BookService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
-@Api(value = "Person Endpoint", description = "Uma descrição qualquer", tags = {"PersonEndpoint"})
+@Api(value = "Book Endpoint", description = "Uma descrição qualquer", tags = {"BookEndpoint"})
 @RestController
-@RequestMapping("/api/v1/person")
-public class PersonController {
+@RequestMapping("/api/v1/book")
+public class BookController {
 
 	@Autowired
-	private PersonService service;
+	private BookService service;
 
-	@ApiOperation(value = "Find all people" ) 
+	@ApiOperation(value = "Find all books")
 	@GetMapping(produces = { "application/json", "application/xml" })
-	public List<PersonVO> findAll() {
-		List<PersonVO> personsVO = service.findAll();
+	public List<BookVO> findAll() {
+		List<BookVO> booksVO = service.findAll();
 
 		// link do HETOAS (links de relacionamentos)
-		personsVO.stream()
-				.forEach(p -> p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel()));
-		return personsVO;
+		booksVO.stream()
+				.forEach(p -> p.add(linkTo(methodOn(BookController.class).findById(p.getKey())).withSelfRel()));
+		return booksVO;
 	}
 
-	@ApiOperation(value = "Find a specific person by your ID" )
+	@ApiOperation(value = "Find a specific book by your ID")
 	@GetMapping(value = "/{id}", produces = { "application/json", "application/xml" })
-	public PersonVO findById(@PathVariable("id") Long id) {
-		PersonVO personVO = service.findById(id);
+	public BookVO findById(@PathVariable("id") Long id) {
+		BookVO bookVO = service.findById(id);
 
 		// link do HETOAS (links de relacionamentos)
-		personVO.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel());
-		return personVO;
+		bookVO.add(linkTo(methodOn(BookController.class).findById(id)).withSelfRel());
+		return bookVO;
 	}
 
-	@ApiOperation(value = "Create a new person") 
+	@ApiOperation(value = "Create a new book")
 	@PostMapping(produces = { "application/json", "application/xml" }, consumes = { "application/json",
 			"application/xml" })
-	public PersonVO create(@RequestBody PersonVO PersonVO) {
-		PersonVO personVO = service.create(PersonVO);
+	public BookVO create(@RequestBody BookVO BookVO) {
+		BookVO bookVO = service.create(BookVO);
 
 		// link do HETOAS (links de relacionamentos)
-		personVO.add(linkTo(methodOn(PersonController.class).findById(personVO.getKey())).withSelfRel());
-		return personVO;
+		bookVO.add(linkTo(methodOn(BookController.class).findById(bookVO.getKey())).withSelfRel());
+		return bookVO;
 	}
 
-	@ApiOperation(value = "Update a specific person")
+	@ApiOperation(value = "Update a specific book")
 	@PutMapping(produces = { "application/json", "application/xml" }, consumes = { "application/json",
 			"application/xml" })
-	public PersonVO update(@RequestBody PersonVO personVO) {
-		PersonVO personVOAtualizado = service.update(personVO);
+	public BookVO update(@RequestBody BookVO bookVO) {
+		BookVO bookVOAtualizado = service.update(bookVO);
 
 		// link do HETOAS (links de relacionamentos)
-		personVOAtualizado.add(linkTo(methodOn(PersonController.class).findById(personVO.getKey())).withSelfRel());
-		return personVOAtualizado;
+		bookVOAtualizado.add(linkTo(methodOn(BookController.class).findById(bookVO.getKey())).withSelfRel());
+		return bookVOAtualizado;
 	}
 
-	@ApiOperation(value = "Delete a specific person by your ID")
+	@ApiOperation(value = "Delete a specific book by your ID")
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> delete(@PathVariable("id") Long id) {
 		service.delete(id);
