@@ -1,5 +1,11 @@
 package br.com.restful.udemy.controller;
 
+/**
+ * Importações especiais do HETOAS
+ */
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,24 +29,43 @@ public class PersonController {
 	@Autowired
 	private PersonService service;
 
-	@GetMapping
+	@GetMapping(produces = { "application/json", "application/xml" })
 	public List<PersonVO> findAll() {
-		return service.findAll();
+		List<PersonVO> personsVO = service.findAll();
+
+		// link do HETOAS (links de relacionamentos)
+		personsVO.stream()
+				.forEach(p -> p.add(linkTo(methodOn(PersonController.class).findById(p.getKey())).withSelfRel()));
+		return personsVO;
 	}
 
-	@GetMapping("/{id}")
+	@GetMapping(value = "/{id}", produces = { "application/json", "application/xml" })
 	public PersonVO findById(@PathVariable("id") Long id) {
-		return service.findById(id);
+		PersonVO personVO = service.findById(id);
+
+		// link do HETOAS (links de relacionamentos)
+		personVO.add(linkTo(methodOn(PersonController.class).findById(id)).withSelfRel());
+		return personVO;
 	}
 
-	@PostMapping
+	@PostMapping(produces = { "application/json", "application/xml" }, consumes = { "application/json",
+			"application/xml" })
 	public PersonVO create(@RequestBody PersonVO PersonVO) {
-		return service.create(PersonVO);
+		PersonVO personVO = service.create(PersonVO);
+
+		// link do HETOAS (links de relacionamentos)
+		personVO.add(linkTo(methodOn(PersonController.class).findById(personVO.getKey())).withSelfRel());
+		return personVO;
 	}
 
-	@PutMapping
-	public PersonVO update(@RequestBody PersonVO PersonVO) {
-		return service.update(PersonVO);
+	@PutMapping(produces = { "application/json", "application/xml" }, consumes = { "application/json",
+			"application/xml" })
+	public PersonVO update(@RequestBody PersonVO personVO) {
+		PersonVO personVOAtualizado = service.update(personVO);
+
+		// link do HETOAS (links de relacionamentos)
+		personVOAtualizado.add(linkTo(methodOn(PersonController.class).findById(personVO.getKey())).withSelfRel());
+		return personVOAtualizado;
 	}
 
 	@DeleteMapping("/{id}")
